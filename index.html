@@ -173,6 +173,22 @@ h1,h2,.h1,.h2,.gt,.spinBtn,.mcard h2,.brand{font-family:Sora,Inter,"Noto Sans Ta
 .glist .hd{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700}
 .sec{text-align:left;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:700;margin:18px 0 6px}
 
+.arena.p1{padding-bottom:132px}.arena.p2{padding-bottom:178px}
+.tray{position:absolute;left:0;right:0;bottom:0;z-index:40;padding:10px 20px 32px;border-radius:28px 28px 0 0;background:linear-gradient(180deg,rgba(22,42,92,.95),rgba(7,18,44,.99));border-top:1px solid rgba(255,255,255,.18);box-shadow:0 -18px 40px rgba(0,0,0,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;animation:trayUp .55s cubic-bezier(.2,.9,.3,1) both}
+@keyframes trayUp{from{transform:translateY(100%)}to{transform:none}}
+.tray .grab{display:block;width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.28);margin:0 auto 12px}
+.trow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.trow .tl{display:flex;align-items:baseline;gap:8px;font-size:13px;color:rgba(255,255,255,.75)}
+.trow .tl b{font:800 30px Sora,Inter,sans-serif;color:var(--gold2);line-height:1}
+.tray .coins{margin:0;gap:7px}
+.tray .btn{margin-top:14px}
+.tray .done{margin:14px 0 0}
+@media(max-width:480px){.tray{padding-bottom:calc(26px + env(safe-area-inset-bottom))}}
+.rtoast{position:absolute;left:14px;right:14px;top:58px;z-index:110;display:flex;gap:12px;align-items:center;padding:13px 16px;border-radius:20px;background:linear-gradient(135deg,rgba(255,224,138,.98),rgba(245,184,46,.98));color:#3a2704;font-weight:700;font-size:14.5px;line-height:1.35;box-shadow:0 16px 40px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(-28px) scale(.94);transition:.38s cubic-bezier(.2,1.2,.4,1)}
+.rtoast.show{opacity:1;visibility:visible;transform:none}
+.rtoast.none{background:rgba(255,255,255,.96);color:var(--ink)}
+.rtoast .te{font-size:28px}
+@media(max-width:480px){.rtoast{top:calc(env(safe-area-inset-top) + 10px)}}
 .block{text-align:center;padding:60px 24px}
 .block .em{font-size:60px}
 
@@ -215,6 +231,7 @@ h1,h2,.h1,.h2,.gt,.spinBtn,.mcard h2,.brand{font-family:Sora,Inter,"Noto Sans Ta
       <div id="app"></div>
       <div class="homebar"></div>
       <div class="sms" id="sms"></div>
+      <div class="rtoast" id="rtoast"></div>
     </div>
   </div>
   <div class="caption">Interactive prototype · simulated backend · not a live campaign</div>
@@ -229,7 +246,7 @@ const app=$('#app'),phone=$('#phone'),panel=$('#panel');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const fmt=n=>'₹'+Number(n).toLocaleString('en-IN');
 const uid=()=>Math.random().toString(36).slice(2,8).toUpperCase();
-const KEY='yara_spin_proto_v2';
+const KEY='yara_spin_proto_v3';
 
 /* ---------- Content ---------- */
 const LANGS=[{c:'en',n:'English',h:'All South Zone'},{c:'ta',n:'தமிழ்',h:'Tamil Nadu'},{c:'te',n:'తెలుగు',h:'Andhra Pradesh · Telangana'},{c:'kn',n:'ಕನ್ನಡ',h:'Karnataka'},{c:'ml',n:'മലയാളം',h:'Kerala'}];
@@ -247,10 +264,10 @@ const RW={
  tv:{id:'tv',name:'TV',short:'TV',em:'📺',value:35000,qty:2,major:true,w:5,col:['#b57d0c','#ffd76a','#2b1d02']},
  mobile:{id:'mobile',name:'Mobile',short:'MOBILE',em:'📱',value:20000,qty:2,major:true,w:6,col:['#b57d0c','#ffd76a','#2b1d02']},
  earpods:{id:'earpods',name:'Earpods',short:'EARPODS',em:'🎧',value:4000,qty:8,w:10,col:['#43268f','#9a78f5','#ffffff']},
- amz:{id:'amz',name:'Amazon Voucher ₹1,500',short:'₹1500',em:'🎟️',value:1500,qty:32,w:14,col:['#b8520a','#ffa047','#ffffff']},
- c300:{id:'c300',name:'Cashback ₹300',short:'₹300',em:'💸',value:300,qty:50,w:14,col:['#0a5a3d','#27c08a','#ffffff']},
- c100:{id:'c100',name:'Cashback ₹100',short:'₹100',em:'💸',value:100,qty:75,w:14,col:['#0b5f7a','#38c0e0','#ffffff']},
- c50:{id:'c50',name:'Cashback ₹50',short:'₹50',em:'💸',value:50,qty:150,w:14,col:['#0f2f78','#4c88e8','#ffffff']},
+ amz:{showVal:true,id:'amz',name:'Amazon Voucher ₹1,500',short:'₹1500',em:'🎟️',value:1500,qty:32,w:14,col:['#b8520a','#ffa047','#ffffff']},
+ c300:{showVal:true,id:'c300',name:'Cashback ₹300',short:'₹300',em:'💸',value:300,qty:50,w:14,col:['#0a5a3d','#27c08a','#ffffff']},
+ c100:{showVal:true,id:'c100',name:'Cashback ₹100',short:'₹100',em:'💸',value:100,qty:75,w:14,col:['#0b5f7a','#38c0e0','#ffffff']},
+ c50:{showVal:true,id:'c50',name:'Cashback ₹50',short:'₹50',em:'💸',value:50,qty:150,w:14,col:['#0f2f78','#4c88e8','#ffffff']},
  bl:{id:'bl',name:'Better Luck Next Time',short:'BETTER LUCK',em:'🍀',value:0,qty:Infinity,w:20,col:['#252f43','#76849f','#ffffff']}
 };
 const SEGS=['bike','c50','tv','c100','mobile','c300','earpods','amz','bl'];
@@ -261,7 +278,7 @@ const DEMO={
 };
 
 /* ---------- State ---------- */
-const freshSession=()=>({mobile:'',otpSent:false,verified:false,attempts:0,cP:false,cT:false,ans:[null,null],done:false});
+const freshSession=()=>({mobile:'',otpSent:false,verified:false,attempts:0,cP:true,cT:true,ans:[null,null],done:false});
 const fresh=()=>({lang:'en',step:'lang',muted:false,session:freshSession(),retailers:{},inv:Object.fromEntries(Object.values(RW).filter(r=>r.id!=='bl').map(r=>[r.id,r.qty])),ledger:[],processed:{},consents:{},mcqLog:[],settings:{closed:false,force:'',dropNext:false},pending:null,log:[]});
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){S=null}
@@ -320,6 +337,21 @@ function go(step){S.step=step;save();$('#sms').classList.remove('show');render()
 function showSms(html){const el=$('#sms');el.innerHTML=html;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),5200);}
 const toastSms=()=>showSms('<small>💬 MESSAGES · now</small><b>YARA</b> — Your OTP is <b>123456</b>. Valid for 5 minutes. Do not share it. <i style="color:#8a96aa">(demo)</i>');
 const toast=msg=>showSms('<small>SYSTEM</small>'+msg);
+function showResultToast(won,rw){
+  const el=$('#rtoast');
+  el.className='rtoast '+(won?'':'none');
+  el.innerHTML='<span class="te">'+rw.em+'</span><span>'+(won?'🎉 '+t('youWon')+' '+rw.name+'!':t('blnt'))+'</span>';
+  void el.offsetWidth;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3600);
+}
+function mountTray(rem,total,cta){
+  document.querySelectorAll('.tray').forEach(x=>x.remove());
+  const coins=Array.from({length:total},(_,i)=>'<span class="coin '+(i<rem?'':'used')+'"></span>').join('');
+  const tr=document.createElement('div');tr.className='tray';
+  tr.innerHTML='<i class="grab"></i><div class="trow"><div class="tl"><b id="rem">'+rem+'</b><span>'+t('spinsLeft')+'</span></div><div class="coins" id="coins">'+coins+'</div></div>'+(cta||'');
+  phone.appendChild(tr);
+  return tr;
+}
 function confetti(){
   const cols=['#f5b82e','#ffd76a','#22a06b','#ffffff','#3b7be0','#ff6a4d'];
   for(let i=0;i<64;i++){const s=document.createElement('span');s.className='cf';
@@ -377,7 +409,7 @@ function rOtp(){
     $('#okBadge').hidden=!s.verified;
     $('#send').hidden=s.verified||s.otpSent;
     mob.disabled=s.verified||s.otpSent;
-    $('#cont').disabled=!(s.verified&&s.cP&&s.cT);
+    $('#cont').disabled=!s.verified;
     save();
   }
   function startTimer(){
@@ -397,14 +429,14 @@ function rOtp(){
       else{setErr('Invalid OTP. Attempts left: '+left);log('Invalid OTP entered ('+left+' attempts left)');}
     }
   };
-  $('#chg').onclick=()=>{s.verified=false;s.otpSent=false;s.cP=false;s.cT=false;rOtp();};
+  $('#chg').onclick=()=>{s.verified=false;s.otpSent=false;s.cP=true;s.cT=true;rOtp();};
   $('#cP').onchange=e=>{s.cP=e.target.checked;ui();};
   $('#cT').onchange=e=>{s.cT=e.target.checked;ui();};
   app.querySelectorAll('[data-doc]').forEach(a=>a.onclick=e=>{e.preventDefault();showDoc(a.dataset.doc);});
   app.querySelectorAll('.chip[data-m]').forEach(c=>c.onclick=()=>{if(s.verified||s.otpSent)return;mob.value=c.dataset.m;s.mobile=c.dataset.m;setErr('');save();});
   $('#cont').onclick=()=>{
-    S.consents[s.mobile]={privacy:true,terms:true,ts:new Date().toISOString(),docVersion:'v0.1-draft'};
-    log('Consent recorded (Privacy + T&C, v0.1-draft)');
+    S.consents[s.mobile]={privacy:s.cP,terms:s.cT,ts:new Date().toISOString(),docVersion:'v0.1-draft'};
+    log('Consent recorded (Privacy: '+(s.cP?'yes':'no')+', T&C: '+(s.cT?'yes':'no')+', v0.1-draft)');
     const d=DEMO[s.mobile];
     if(!d){log('Eligibility check: '+s.mobile+' NOT in qualified list → gameplay blocked');go('noelig');return;}
     if(!S.retailers[s.mobile])S.retailers[s.mobile]={mobile:s.mobile,allocated:d.spins,used:0,wonMajor:false,mcqDone:false};
@@ -475,13 +507,12 @@ function rSpin(){
   if(S.settings.closed){app.innerHTML=closedCard();return;}
   const rem=r.allocated-r.used;
   const bulbs=Array.from({length:22},(_,i)=>'<i style="--a:'+(i*360/22)+'deg;animation-delay:'+((i%2)*.55)+'s"></i>').join('');
-  const coins=Array.from({length:r.allocated},(_,i)=>'<span class="coin '+(i<rem?'':'used')+'"></span>').join('');
-  app.innerHTML='<div class="arena"><div class="rays"></div><button class="mute" id="mute" aria-label="Sound">'+(S.muted?'🔇':'🔊')+'</button>'+
+  app.innerHTML='<div class="arena p1"><div class="rays"></div><button class="mute" id="mute" aria-label="Sound">'+(S.muted?'🔇':'🔊')+'</button>'+
    '<span class="chipG">🏪 '+d.name+'</span><div class="gt">'+t('spinTitle')+'</div><div class="scheme">'+d.pp+' MT PP + '+d.bio+' L Bio · '+r.allocated+' '+t('spinsWord')+'</div>'+
-   '<div class="coins" id="coins">'+coins+'</div><div class="cnt"><b id="rem">'+rem+'</b>'+t('spinsLeft')+'</div>'+
    '<div class="wheelStage" id="ws"><div class="tilt"><div class="rim"><div class="face"><canvas id="wheel"></canvas></div><div class="bulbs">'+bulbs+'</div><div class="hub">YARA</div>'+POINTER+'</div></div><div class="floor"></div></div>'+
    '<button class="spinBtn" id="spin" '+(rem?'':'disabled')+'>'+(rem?t('spinNow'):t('allDone'))+'</button>'+
    (rem?'':'<button class="btn ghost" id="view">'+t('summary')+'</button>')+'</div>';
+  mountTray(rem,r.allocated);
   const cv=$('#wheel');drawWheel(cv);
   if(document.fonts&&document.fonts.load)document.fonts.load('800 38px Inter').then(()=>{if($('#wheel')===cv)drawWheel(cv);});
   const v=$('#view');if(v)v.onclick=()=>go('result');
@@ -530,7 +561,8 @@ async function doSpin(){
   const r=S.retailers[m],rem=r.allocated-r.used;
   const remEl=$('#rem');if(remEl)remEl.textContent=rem;
   document.querySelectorAll('#coins .coin').forEach((c,i)=>c.classList.toggle('used',i>=rem));
-  await sleep(750);
+  showResultToast(res.reward!=='bl',RW[res.reward]);
+  await sleep(1900);
   spinning=false;
   go('result');
 }
@@ -542,21 +574,22 @@ function rResult(){
   if(!last){go('spin');return;}
   const rw=RW[last.rid],rem=r.allocated-r.used,won=last.rid!=='bl';
   const prizes=mine.filter(x=>x.rid!=='bl');
-  app.innerHTML='<div class="arena"><div class="rays"></div>'+
+  app.innerHTML='<div class="arena p2"><div class="rays"></div>'+
    '<div class="rcard '+(won?'':'none')+'"><div class="em">'+rw.em+'</div>'+
-   (won?'<div class="tag">'+t('congrats')+'</div><div class="mut" style="color:rgba(255,255,255,.7);margin-top:8px">'+t('youWon')+'</div><h2>'+rw.name+'</h2><div class="val">'+fmt(rw.value)+'</div>':'<h2 style="margin-top:12px">'+t('blnt')+'</h2><div class="mut" style="color:rgba(255,255,255,.65)">No prize this spin</div>')+
-   '<small>Gameplay '+last.gp+(won?' · '+last.status:'')+'</small></div>'+
+   (won?'<div class="tag">'+t('congrats')+'</div><div class="mut" style="color:rgba(255,255,255,.7);margin-top:8px">'+t('youWon')+'</div><h2'+(rw.showVal?'':' style="font-size:30px;margin-bottom:6px"')+'>'+rw.name+'</h2>'+(rw.showVal?'<div class="val">'+fmt(rw.value)+'</div>':''):'<h2 style="margin-top:12px">'+t('blnt')+'</h2><div class="mut" style="color:rgba(255,255,255,.65)">No prize this spin</div>')+
+   '</div>'+
    (won&&rw.major&&rem>0?'<div class="noteD">You have won a major reward. Your remaining spins can still win other rewards.</div>':'')+
-   (rem>0?'<button class="btn gold" id="again">'+t('spinAgain')+' · '+rem+' '+t('spinsLeft')+'</button>':'<div class="done">✓ '+t('allDone')+' ('+r.used+'/'+r.allocated+')</div>')+
    '<div class="sec">'+t('summary')+'</div>'+
-   '<div class="glist"><div class="hd"><span>Reward</span><span>Value</span></div>'+(prizes.length?prizes.map(p=>'<div><span>'+RW[p.rid].em+' '+p.name+'</span><b>'+fmt(p.value)+'</b></div>').join(''):'<div><span style="opacity:.6">No prize yet</span><span></span></div>')+'</div>'+
+   '<div class="glist">'+(prizes.length?prizes.map(p=>'<div><span>'+RW[p.rid].em+' '+p.name+'</span>'+(RW[p.rid].showVal?'<b>'+fmt(p.value)+'</b>':'<span></span>')+'</div>').join(''):'<div><span style="opacity:.6">No prize yet</span><span></span></div>')+'</div>'+
    (rem>0?'':'<button class="btn ghost" id="again2">Try another demo retailer</button>')+'</div>';
+  mountTray(rem,r.allocated,rem>0?'<button class="btn gold" id="again">'+t('spinAgain')+'</button>':'<div class="done">✓ '+t('allDone')+' ('+r.used+'/'+r.allocated+')</div>');
   const a=$('#again');if(a)a.onclick=()=>go('spin');
   const b=$('#again2');if(b)b.onclick=()=>{S.session=freshSession();go('lang');};
   if(won){confetti();}
 }
 
 function render(){
+  document.querySelectorAll('.tray').forEach(x=>x.remove());
   if(['spin','result','mcq'].includes(S.step)&&!S.retailers[S.session.mobile]){S.step='lang';}
   if(S.step==='spin'&&S.pending)S.step='result';
   document.documentElement.lang=S.lang;
